@@ -1,0 +1,60 @@
+title: Suspicious LSASS Process Access Indicative of Credential Dumping
+id: 8a6f3c1b-2e4d-4a7e-9c8d-1f3a5b7c9d2e
+status: test
+description: |
+  Detects process access (Sysmon Event ID 10) targeting lsass.exe with access rights
+  commonly requested by credential-dumping tools such as Mimikatz, ProcDump (-ma),
+  and comsvcs.dll MiniDump. The access mask 0x1010 / 0x1410 / 0x1438 includes
+  PROCESS_VM_READ and PROCESS_QUERY_LIMITED_INFORMATION, sufficient for memory
+  dumping but not typical of routine system behavior.
+references:
+  - https://attack.mitre.org/techniques/T1003/001/
+  - https://github.com/SwiftOnSecurity/sysmon-config
+  - https://www.elastic.co/guide/en/security/current/potential-credential-access-via-lsass-memory-dump.html
+author: Yusuf Efil
+date: 2026-02-01
+modified: 2026-05-15
+tags:
+  - attack.credential_access
+  - attack.t1003.001
+logsource:
+  category: process_access
+  product: windows
+detection:
+  selection_lsass:
+    TargetImage|endswith: '\lsass.exe'
+  selection_access:
+    GrantedAccess:
+      - '0x1010'
+      - '0x1410'
+      - '0x1438'
+      - '0x143a'
+      - '0x1fffff'
+  filter_legit:
+    SourceImage|endswith:
+      - '\MsMpEng.exe'             # Defender
+      - '\MsSense.exe'              # Defender for Endpoint sensor
+      - '\svchost.exe'              # legitimate system component (tune further on tenant basis)
+      - '\wmiprvse.exe'
+      - '\taskmgr.exe'
+  condition: selection_lsass and selection_access and not filter_legit
+fields:
+  - SourceImage
+  - SourceProcessId
+  - TargetImage
+  - GrantedAccess
+  - CallTrace
+falsepositives:
+  - |
+    EDR / AV agents performing legitimate scans against lsass. Tune by adding the
+    agent's image path to filter_legit. Verify the path matches the vendor's signed
+    installation directory before whitelisting.
+  - |
+    Performance / inventory tools (e.g., SCCM client) may access lsass with elevated
+    rights during inventory cycles. Correlate with parent process and signing
+    certificate before suppressing.
+  - |
+    Process Explorer / Process Hacker run by admins for troubleshooting. Consider
+    alerting on these by default; they should not be in routine use on production
+    endpoints.
+level: high
