@@ -1,0 +1,4 @@
+﻿build/
+*.params.json
+.venv/
+__pycache__/
