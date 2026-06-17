@@ -1,6 +1,0 @@
-﻿{
-  "name": "gh-main",
-  "issuer": "https://token.actions.githubusercontent.com",
-  "subject": "repo:/heads/main",
-  "audiences": ["api://AzureADTokenExchange"]
-}
