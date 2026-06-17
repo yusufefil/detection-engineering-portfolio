@@ -23,7 +23,7 @@ TACTIC_MAP = {
 def to_kql(rule_path):
     res = subprocess.run(
         ["sigma", "convert", "-t", "kusto", "-p", PIPELINE, str(rule_path)],
-        capture_output=True, text=True, shell=True)
+        capture_output=True, text=True)
     if res.returncode != 0:
         print(f"[!] convert failed for {rule_path}:\n{res.stderr}", file=sys.stderr)
         sys.exit(1)
