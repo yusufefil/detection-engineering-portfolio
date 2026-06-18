@@ -29,6 +29,9 @@ jobs:
       - name: Convert Sigma to params
         run: python tooling/sigma_to_sentinel.py
 
+      - name: Convert KQL to params
+        run: python tooling/kql_to_sentinel.py
+
       - name: Azure login (OIDC)
         uses: azure/login@v2
         with:
