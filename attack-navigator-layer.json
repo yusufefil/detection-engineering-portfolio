@@ -1,0 +1,120 @@
+{
+  "name": "Sentinel Detection-as-Code Lab Coverage",
+  "versions": {
+    "attack": "16",
+    "navigator": "5.1.0",
+    "layer": "4.5"
+  },
+  "domain": "enterprise-attack",
+  "description": "Detection coverage for the Sentinel Detection-as-Code lab. Rules authored as Sigma (auto-converted to KQL) and native KQL, deployed via GitHub Actions (OIDC) and validated through adversary emulation. Author: Yusuf Efil.",
+  "filters": {
+    "platforms": [
+      "Windows"
+    ]
+  },
+  "sorting": 0,
+  "layout": {
+    "layout": "side",
+    "aggregateFunction": "average",
+    "showID": true,
+    "showName": true,
+    "showAggregateScores": true,
+    "countUnscored": false,
+    "expandedSubtechniques": "annotated"
+  },
+  "hideDisabled": false,
+  "techniques": [
+    {
+      "techniqueID": "T1566",
+      "tactic": "initial-access",
+      "score": 100,
+      "color": "",
+      "comment": "Office Application Spawning a Shell (Behavioral) - native KQL on Sysmon EID1 parent-child. Detects macro-based phishing. Emulated & validated (High alerts).",
+      "enabled": true,
+      "metadata": [
+        { "name": "Rule", "value": "office_spawning_shell.yaml" },
+        { "name": "Data source", "value": "Sysmon EventID 1 (parsed)" },
+        { "name": "Status", "value": "Validated via emulation" }
+      ],
+      "showSubtechniques": false
+    },
+    {
+      "techniqueID": "T1059",
+      "tactic": "execution",
+      "score": 100,
+      "color": "",
+      "comment": "Covered by two rules: Office->shell behavioral (T1566/T1059) and Encoded PowerShell (T1059.001). Validated via emulation.",
+      "enabled": true,
+      "metadata": [
+        { "name": "Rules", "value": "office_spawning_shell.yaml, win_susp_encoded_powershell.yml" },
+        { "name": "Status", "value": "Validated via emulation" }
+      ],
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1059.001",
+      "tactic": "execution",
+      "score": 100,
+      "color": "",
+      "comment": "Suspicious Encoded PowerShell Command Line - Sigma rule auto-converted to KQL via pipeline. Detects -enc / -EncodedCommand. Emulated & validated (High alerts).",
+      "enabled": true,
+      "metadata": [
+        { "name": "Rule", "value": "win_susp_encoded_powershell.yml (Sigma)" },
+        { "name": "Data source", "value": "SecurityEvent 4688" },
+        { "name": "Status", "value": "Validated via emulation" }
+      ],
+      "showSubtechniques": false
+    },
+    {
+      "techniqueID": "T1003",
+      "tactic": "credential-access",
+      "score": 100,
+      "color": "",
+      "comment": "Covered by LSASS Memory Dump rule (sub-technique T1003.001).",
+      "enabled": true,
+      "metadata": [
+        { "name": "Rule", "value": "win_lsass_dump.yml (Sigma)" },
+        { "name": "Status", "value": "Validated via emulation" }
+      ],
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1003.001",
+      "tactic": "credential-access",
+      "score": 100,
+      "color": "",
+      "comment": "LSASS Memory Dump via Comsvcs or ProcDump - Sigma rule auto-converted to KQL. Detects comsvcs.dll MiniDump and procdump targeting lsass. Emulated & validated (High alerts).",
+      "enabled": true,
+      "metadata": [
+        { "name": "Rule", "value": "win_lsass_dump.yml (Sigma)" },
+        { "name": "Data source", "value": "SecurityEvent 4688" },
+        { "name": "Status", "value": "Validated via emulation" }
+      ],
+      "showSubtechniques": false
+    }
+  ],
+  "gradient": {
+    "colors": [
+      "#ffffff",
+      "#66b1ff",
+      "#0b62d4"
+    ],
+    "minValue": 0,
+    "maxValue": 100
+  },
+  "legendItems": [
+    {
+      "label": "Detection deployed & validated via emulation",
+      "color": "#0b62d4"
+    }
+  ],
+  "metadata": [
+    { "name": "Pipeline", "value": "Sigma -> KQL + native KQL, GitHub Actions (OIDC) auto-deploy" },
+    { "name": "Validation", "value": "Atomic-style adversary emulation per technique" },
+    { "name": "SIEM", "value": "Microsoft Sentinel (Log Analytics: law-sentinel-lab)" }
+  ],
+  "showTacticRowBackground": true,
+  "tacticRowBackground": "#205b8f",
+  "selectTechniquesAcrossTactics": true,
+  "selectSubtechniquesWithParent": false
+}
