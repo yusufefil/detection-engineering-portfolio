@@ -1,5 +1,7 @@
 # Detection-as-Code on Microsoft Sentinel
 
+[![Sponsor](https://img.shields.io/badge/sponsor-30363D?logo=GitHub-Sponsors&logoColor=EA4AAA)](https://github.com/sponsors/yusufefil)
+
 > An end-to-end detection engineering lab: a Windows attack range feeding Microsoft Sentinel,
 > with detection rules authored as **Sigma** (auto-converted to KQL) and **native KQL**, deployed
 > automatically through a **GitHub Actions CI/CD pipeline using OIDC (passwordless) authentication**,
